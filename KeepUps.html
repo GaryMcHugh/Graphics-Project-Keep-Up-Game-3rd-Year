@@ -27,16 +27,34 @@
       var ball = {
         position: {x: 400, y: 175}
         , radius: 5
-        , velocity: {x: 3, y: 0}
+        , velocity: {x: 3, y: 5}
 		, acceleration: {x: 0, y: 0.1}
 		}
+	  function moveBall() {
+		ctx.clearRect(0, 0, canvas.width, canvas.height);
 	  
 		// Draw the ball.
 		ctx.fillStyle = "rgb(0, 0, 255)";
         ctx.beginPath();
         ctx.arc(ball.position.x, ball.position.y, ball.radius, 0, 2 * Math.PI);
         ctx.fill();
+		
+		// Update the y location.
+		ball.position.x += ball.velocity.x;
+        ball.position.y += ball.velocity.y;
+		
+		// Keep the animation going while the ball has not touched the canvas bottom.
+        if ((ball.position.x >= canvas.width) ||  (ball.position.x <= ball.radius))
+          ball.velocity.x = -ball.velocity.x;    
+		if ((ball.position.y >= canvas.height) ||  (ball.position.y <= ball.radius))
+          ball.velocity.y = -ball.velocity.y;
+        
+        window.requestAnimationFrame(moveBall);
+      }
+		
+		window.requestAnimationFrame(moveBall);
     </script>
+
 	
   </body>
   
