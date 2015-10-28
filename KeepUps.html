@@ -22,6 +22,20 @@
       var canvas = document.getElementById("game-canvas");
       // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
+	  
+	  // An object for the ball.
+      var ball = {
+        position: {x: 400, y: 175}
+        , radius: 5
+        , velocity: {x: 3, y: 0}
+		, acceleration: {x: 0, y: 0.1}
+		}
+	  
+		// Draw the ball.
+		ctx.fillStyle = "rgb(0, 0, 255)";
+        ctx.beginPath();
+        ctx.arc(ball.position.x, ball.position.y, ball.radius, 0, 2 * Math.PI);
+        ctx.fill();
     </script>
 	
   </body>
