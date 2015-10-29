@@ -5,11 +5,17 @@
   <head>
    <meta charset="UTF-8">
    <title>KeepUpsGame</title>
-   
-    <style type="text/css">
-	  canvas {
+
+    <style type="text/css"> 
+	
+	  canvas { 
         border: 1px solid black;
+		padding: 0;
+		margin: auto;
+		display: block;
+		width: 800px;
       }
+	  
 	</style>
 	
   </head>
@@ -17,9 +23,9 @@
   <body>
 	<canvas id="game-canvas" height="400" width="700"></canvas>
 	
-    <script type="text/javascript">
+    <script type="text/javascript"> 
 	  // Gets a handle to the element with id canvasOne.
-      var canvas = document.getElementById("game-canvas");
+      var canvas = document.getElementById("game-canvas"); 
       // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
 	  
