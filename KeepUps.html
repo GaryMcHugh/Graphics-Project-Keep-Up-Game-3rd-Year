@@ -29,11 +29,13 @@
       // Get a 2D context for the canvas.
       var ctx = canvas.getContext("2d");
 	  
+	  var score=0;
+	  
 	  // An object for the ball.
       var ball = {
-        position: {x: 400, y: 175}
+        position: {x: 200, y: 50}
         , radius: 5
-        , velocity: {x: 3, y: 5}
+        , velocity: {x: 3, y: 3}
 		, acceleration: {x: 0, y: 0.1}
 		}
 		
@@ -57,6 +59,15 @@
 			ctx.fill();
 		}
 		
+		function gameOver()
+		{
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.fillStyle = "black";
+			ctx.font = "18px Arial";
+			ctx.fillText("Game Over ", 300, 200);
+			shutdown();
+		}
+		
 		function collideWithRect() {
 			if (ball.position.x + ball.radius < rectangle.position.x || ball.position.x - ball.radius > rectangle.position.x + rectangle.length)
 				return;
@@ -64,8 +75,14 @@
 			else if (ball.position.y + ball.radius < rectangle.position.y)
 				return;
 			
-			else
-			ball.velocity.y = -ball.velocity.y;
+			else{
+				ball.velocity.y = -ball.velocity.y;
+				score++;
+			}	
+		}
+		
+		function score() {
+
 		}
 		
 	
@@ -78,6 +95,8 @@
 		//draw rectangle
 		drawRect();
 		
+		//score();
+		
 		// Update the y location.
 		ball.position.x += ball.velocity.x;
         ball.position.y += ball.velocity.y;
@@ -88,7 +107,17 @@
 		if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
           ball.velocity.y = -ball.velocity.y;
 		  
+		if(ball.position.y  > rectangle.position.y)
+		{	
+			//call game over function
+			gameOver();
+		}
+		  
 		  collideWithRect();
+		  
+			ctx.fillStyle = "black";
+			ctx.font = "18px Arial";
+			ctx.fillText("Score: " + score, 10, 20);
 		
         window.requestAnimationFrame(moveBall);
       }
