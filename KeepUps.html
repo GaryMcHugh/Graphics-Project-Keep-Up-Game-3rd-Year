@@ -76,11 +76,23 @@
           ball.velocity.x = -ball.velocity.x;    
 		if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
           ball.velocity.y = -ball.velocity.y;
-        
+		
         window.requestAnimationFrame(moveBall);
       }
 		
 		window.requestAnimationFrame(moveBall);
+		
+	// Add an event listener to the keypress event.
+      window.addEventListener("keydown", function(event) { 
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
+          rectangle.position.x += 10;
+        else if (event.keyCode == 37 && rectangle.position.x > 0)
+          rectangle.position.x -= 10;
+		 
+        drawRect();
+      });
     </script>
 
 	
