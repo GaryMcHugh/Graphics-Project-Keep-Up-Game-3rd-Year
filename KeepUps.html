@@ -57,6 +57,17 @@
 			ctx.fill();
 		}
 		
+		function collideWithRect() {
+			if (ball.position.x + ball.radius < rectangle.position.x || ball.position.x - ball.radius > rectangle.position.x + rectangle.length)
+				return;
+			
+			else if (ball.position.y + ball.radius < rectangle.position.y)
+				return;
+			
+			else
+			ball.velocity.y = -ball.velocity.y;
+		}
+		
 	
 	  function moveBall() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -76,6 +87,8 @@
           ball.velocity.x = -ball.velocity.x;    
 		if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
           ball.velocity.y = -ball.velocity.y;
+		  
+		  collideWithRect();
 		
         window.requestAnimationFrame(moveBall);
       }
