@@ -78,13 +78,21 @@
 			else{
 				ball.velocity.y = -ball.velocity.y;
 				score++;
+				if(score != 0 && score % 5 == 0){
+					if(ball.velocity.y < 0)
+						ball.velocity.y -= 0.5;
+						
+					if(ball.velocity.y > 0)
+						ball.velocity.y += 0.5;
+						
+					if(ball.velocity.x < 0)
+						ball.velocity.x -= 0.5;
+						
+					if(ball.velocity.x > 0)
+						ball.velocity.x += 0.5;
+				}
 			}	
 		}
-		
-		function score() {
-
-		}
-		
 	
 	  function moveBall() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -107,7 +115,7 @@
 		if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
           ball.velocity.y = -ball.velocity.y;
 		  
-		if(ball.position.y  > rectangle.position.y)
+		if(ball.position.y  > rectangle.position.y + 10)
 		{	
 			//call game over function
 			gameOver();
@@ -133,7 +141,6 @@
         else if (event.keyCode == 37 && rectangle.position.x > 0)
           rectangle.position.x -= 10;
 		 
-        drawRect();
       });
     </script>
 
