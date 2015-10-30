@@ -41,8 +41,14 @@
 		, acceleration: {x: 0, y: 0.1}
 		}
 		
-		  ball.position.x = Math.floor((Math.random() * 690 + 1));
-		  console.log(ball.position.x);
+		 ball.position.x = Math.floor((Math.random() * 690 + 1));
+		 console.log(ball.position.x);
+		 
+		 if (ball.position.x < 3)
+		 {
+			ball.position.x = Math.floor((Math.random() * 690 + 1));
+		 }
+		  
 		
 	  var rectangle = {
         position: {x: 300, y: 370}
