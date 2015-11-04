@@ -32,28 +32,50 @@
 	  
 	  var score=0;
 	  var over=0;
+	  var doubleScore=0;
+	  var randomTime;
+	  var draw=0;
+	  var canDrawCircle=1;
 	  
 	  // An object for the ball.
-      var ball = {
-        position: {x: 200, y: 50}
-        , radius: 5
-        , velocity: {x: 3, y: 3}
-		, acceleration: {x: 0, y: 0.1}
+		var ball = {
+			position: {x: 1, y: 50}
+			, radius: 5
+			, velocity: {x: 3, y: 3}
+			, acceleration: {x: 0, y: 0.1}
 		}
 		
-		 ball.position.x = Math.floor((Math.random() * 690 + 1));
-		 console.log(ball.position.x);
+		var rectangle = {
+			position: {x: 300, y: 370}
+			, width: 20
+			, length: 100
+		}
+		
+		var bonusCircle = {
+			position: {x: 999, y: 999}
+			, radius: 20
+		}
 		 
-		 if (ball.position.x < 3)
+		 
+		 while((bonusCircle.position.x >= canvas.width - bonusCircle.radius) ||  (bonusCircle.position.x <= bonusCircle.radius))
+		 {
+			bonusCircle.position.x = Math.floor((Math.random() * 150 + 1));
+			console.log(bonusCircle.position.y);
+		 }
+		 
+		 while ((bonusCircle.position.y >= canvas.height - bonusCircle.radius) ||  (bonusCircle.position.y <= bonusCircle.radius))
+		 {
+			 bonusCircle.position.y = Math.floor((Math.random() * 150 + 1));
+			console.log(bonusCircle.position.y);
+		 }
+		 
+		 while (ball.position.x < 3)
 		 {
 			ball.position.x = Math.floor((Math.random() * 690 + 1));
 		 }
-		  	
-	  var rectangle = {
-        position: {x: 300, y: 370}
-        , width: 20
-        , length: 100
-		}
+		 
+		 randomTime = Math.floor((Math.random() * 5000 + 5000));
+		 console.log("generated random time" + randomTime);
 		
 		function drawCircle() {
 			ctx.fillStyle = "rgb(0, 0, 255)";
@@ -62,19 +84,34 @@
 			ctx.fill();
 		}
 		
+		function drawBonusCircle() {
+			ctx.fillStyle = "rgb(0, 255, 0)";
+			if(doubleScore == 1)
+			{
+				ctx.fillStyle = "rgb(255, 255, 255)";
+			}
+			ctx.beginPath();
+			ctx.arc(bonusCircle.position.x, bonusCircle.position.y, bonusCircle.radius, 0, 2 * Math.PI);
+			ctx.fill();
+			console.log("drawn");
+		}
+		
 		function drawRect() {
 			ctx.fillStyle = "rgb(170, 170, 170)";
 			ctx.beginPath();
 			ctx.rect(rectangle.position.x,rectangle.position.y,rectangle.length,rectangle.width);
 			ctx.fill();
+			console.log("drew Rect");
 		}
 		
 		function gameOver()
 		{
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.fillStyle = "black";
-			ctx.font = "18px Arial";
-			ctx.fillText("Game Over ", 300, 200);
+			ctx.font = "22px Arial";
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx.fillText("Game Over ", 280, 200);
+			ctx.fillText("Your Score Was: " + score, 260, 230);
 			over = 1;
 			window.removeEventListener("keydown", moveevent);
 		}
@@ -88,7 +125,15 @@
 			
 			else{
 				ball.velocity.y = -ball.velocity.y;
-				score++;
+				if(doubleScore == 0)
+				{
+					score++;
+				}
+				if(doubleScore == 1)
+				{
+					score = score+2;
+				}
+				
 				if(score != 0 && score % 5 == 0){
 					if(ball.velocity.y < 0)
 						ball.velocity.y -= 0.5;
@@ -104,15 +149,40 @@
 				}
 			}	
 		}
-	
+		
+		function collideWithCircle() {	
+			  var dx = (ball.position.x ) - (bonusCircle.position.x );
+              var dy = (ball.position.y ) - (bonusCircle.position.y );
+              var distance = Math.sqrt(dx * dx + dy * dy);
+			  
+              if (distance < ball.radius + bonusCircle.radius & canDrawCircle == 0) {                      
+                  doubleScore=1;       
+              } 
+		}
+	function canDraw() {
+		canDrawCircle=0;
+	}
 	  function moveBall() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
+		if(draw == 0)
+		{
+			draw=1;
+			setTimeout(canDraw, randomTime);
+			console.log("time out set");
+		}
+		
+		if(canDrawCircle == 0)
+		{
+			drawBonusCircle();
+		}
+		//drawBonusCircle();
 		//draw circle
 		drawCircle();
 		
 		//draw rectangle
 		drawRect();
+		
 		
 		//score();
 		
@@ -133,6 +203,7 @@
 		}
 		  
 		  collideWithRect();
+		  collideWithCircle();
 		  
 			ctx.fillStyle = "black";
 			ctx.font = "18px Arial";
@@ -151,9 +222,8 @@
         if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
           rectangle.position.x += 10;
         else if (event.keyCode == 37 && rectangle.position.x > 0)
-          rectangle.position.x -= 10;
-		 
-      }
+          rectangle.position.x -= 10; 
+    }
 	
 	// Add an event listener to the keypress event.
       window.addEventListener("keydown", moveevent);
