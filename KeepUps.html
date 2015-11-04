@@ -48,8 +48,7 @@
 		 {
 			ball.position.x = Math.floor((Math.random() * 690 + 1));
 		 }
-		  
-		
+		  	
 	  var rectangle = {
         position: {x: 300, y: 370}
         , width: 20
@@ -76,7 +75,8 @@
 			ctx.fillStyle = "black";
 			ctx.font = "18px Arial";
 			ctx.fillText("Game Over ", 300, 200);
-			shutdown();
+			over = 1;
+			window.removeEventListener("keydown", moveevent);
 		}
 		
 		function collideWithRect() {
@@ -138,15 +138,14 @@
 			ctx.font = "18px Arial";
 			ctx.fillText("Score: " + score, 10, 20);
 		
-        window.requestAnimationFrame(moveBall);
+        if (!over)
+			window.requestAnimationFrame(moveBall);
       }
 		
 		window.requestAnimationFrame(moveBall);
-		
-	// Add an event listener to the keypress event.
-	if(over == 0)
-	{
-      window.addEventListener("keydown", function(event) { 
+	
+	
+	function moveevent(event) { 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         
         if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
@@ -154,8 +153,10 @@
         else if (event.keyCode == 37 && rectangle.position.x > 0)
           rectangle.position.x -= 10;
 		 
-      });
-	  }
+      }
+	
+	// Add an event listener to the keypress event.
+      window.addEventListener("keydown", moveevent);
 
     </script>
 
