@@ -33,9 +33,14 @@
 	  var score=0;
 	  var over=0;
 	  var doubleScore=0;
-	  var randomTime;
-	  var draw=0;
+	  var biggerPaddle=0;
+	  var randomTimeDoubleScore;
+	  var randomTimeBiggerPaddle;
+	  var drawDoubleScore=0;
+	  var drawBiggerPaddle=0;
 	  var canDrawCircle=1;
+	  var canDrawBigPaddle=1;
+	  var executeOnce=0;
 	  
 	  // An object for the ball.
 		var ball = {
@@ -51,22 +56,39 @@
 			, length: 100
 		}
 		
-		var bonusCircle = {
+		var doubleScoreCircle = {
+			position: {x: 999, y: 999}
+			, radius: 20
+		}
+		
+		var biggerPaddleCircle = {
 			position: {x: 999, y: 999}
 			, radius: 20
 		}
 		 
 		 
-		 while((bonusCircle.position.x >= canvas.width - bonusCircle.radius) ||  (bonusCircle.position.x <= bonusCircle.radius))
+		 while((doubleScoreCircle.position.x >= canvas.width - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.x <= doubleScoreCircle.radius))
 		 {
-			bonusCircle.position.x = Math.floor((Math.random() * 150 + 1));
-			console.log(bonusCircle.position.y);
+			doubleScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
+			console.log("doubleScoreCircle x: " + doubleScoreCircle.position.x);
 		 }
 		 
-		 while ((bonusCircle.position.y >= canvas.height - bonusCircle.radius) ||  (bonusCircle.position.y <= bonusCircle.radius))
+		 while ((doubleScoreCircle.position.y >= canvas.height - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.y <= doubleScoreCircle.radius))
 		 {
-			 bonusCircle.position.y = Math.floor((Math.random() * 150 + 1));
-			console.log(bonusCircle.position.y);
+			 doubleScoreCircle.position.y = Math.floor((Math.random() * 150 + 1));
+			console.log("doubleScoreCircle y: " + doubleScoreCircle.position.y);
+		 }
+		 
+		 while((biggerPaddleCircle.position.x >= canvas.width - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.x <= biggerPaddleCircle.radius))
+		 {
+			biggerPaddleCircle.position.x = Math.floor((Math.random() * 600 + 1));
+			console.log("biggerPaddleCircle x: " + biggerPaddleCircle.position.x);
+		 }
+		 
+		 while ((biggerPaddleCircle.position.y >= canvas.height - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.y <= biggerPaddleCircle.radius))
+		 {
+			biggerPaddleCircle.position.y = Math.floor((Math.random() * 150 + 1));
+			console.log("biggerPaddleCircle y: " + biggerPaddleCircle.position.y);
 		 }
 		 
 		 while (ball.position.x < 3)
@@ -74,8 +96,11 @@
 			ball.position.x = Math.floor((Math.random() * 690 + 1));
 		 }
 		 
-		 randomTime = Math.floor((Math.random() * 5000 + 5000));
-		 console.log("generated random time" + randomTime);
+		 randomTimeDoubleScore = Math.floor((Math.random() * 5000 + 5000));
+		 console.log("generated random time" + randomTimeDoubleScore);
+		 
+		 randomTimeBiggerPaddle = Math.floor((Math.random() * 5000 + 10000));
+		 console.log("generated random time" + randomTimeBiggerPaddle);
 		
 		function drawCircle() {
 			ctx.fillStyle = "rgb(0, 0, 255)";
@@ -84,16 +109,28 @@
 			ctx.fill();
 		}
 		
-		function drawBonusCircle() {
+		function drawDoubleScoreCircle() {
 			ctx.fillStyle = "rgb(0, 255, 0)";
 			if(doubleScore == 1)
 			{
 				ctx.fillStyle = "rgb(255, 255, 255)";
 			}
 			ctx.beginPath();
-			ctx.arc(bonusCircle.position.x, bonusCircle.position.y, bonusCircle.radius, 0, 2 * Math.PI);
+			ctx.arc(doubleScoreCircle.position.x, doubleScoreCircle.position.y, doubleScoreCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-			console.log("drawn");
+			console.log("doubleScore drawn");
+		}
+		
+		function drawBiggerPaddleCircle() {
+			ctx.fillStyle = "rgb(255, 0, 0)";
+			if(biggerPaddle == 1)
+			{
+				ctx.fillStyle = "rgb(255, 255, 255)";
+			}
+			ctx.beginPath();
+			ctx.arc(biggerPaddleCircle.position.x, biggerPaddleCircle.position.y, biggerPaddleCircle.radius, 0, 2 * Math.PI);
+			ctx.fill();
+			console.log("doubleScore drawn");
 		}
 		
 		function drawRect() {
@@ -133,6 +170,11 @@
 				{
 					score = score+2;
 				}
+				if(biggerPaddle == 0)
+				{
+					return;
+				}
+				
 				
 				if(score != 0 && score % 5 == 0){
 					if(ball.velocity.y < 0)
@@ -150,86 +192,121 @@
 			}	
 		}
 		
-		function collideWithCircle() {	
-			  var dx = (ball.position.x ) - (bonusCircle.position.x );
-              var dy = (ball.position.y ) - (bonusCircle.position.y );
+		function collideWithDoubleScoreCircle() {	
+			  var dx = (ball.position.x ) - (doubleScoreCircle.position.x );
+              var dy = (ball.position.y ) - (doubleScoreCircle.position.y );
               var distance = Math.sqrt(dx * dx + dy * dy);
 			  
-              if (distance < ball.radius + bonusCircle.radius & canDrawCircle == 0) {                      
+              if (distance < ball.radius + doubleScoreCircle.radius & canDrawCircle == 0) {                      
                   doubleScore=1;       
               } 
 		}
-	function canDraw() {
-		canDrawCircle=0;
-	}
-	  function moveBall() {
-		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
-		if(draw == 0)
-		{
-			draw=1;
-			setTimeout(canDraw, randomTime);
-			console.log("time out set");
+		function collideWithBigPaddleCircle() {	
+			  var dx = (ball.position.x ) - (biggerPaddleCircle.position.x );
+              var dy = (ball.position.y ) - (biggerPaddleCircle.position.y );
+              var distance = Math.sqrt(dx * dx + dy * dy);
+			  
+              if (distance < ball.radius + biggerPaddleCircle.radius & canDrawBigPaddle == 0) {                      
+                  biggerPaddle = 1;
+              }
+			  
+			if(biggerPaddle == 1 && executeOnce == 0)
+			{
+				executeOnce=1;
+				rectangle.length = rectangle.length + 25;
+			}
+		}
+				
+		function canDrawBonusCircle() {
+			canDrawCircle=0;
 		}
 		
-		if(canDrawCircle == 0)
-		{
-			drawBonusCircle();
+		function canDrawBiggerPaddle() {
+			canDrawBigPaddle=0;
 		}
-		//drawBonusCircle();
-		//draw circle
-		drawCircle();
+	
+		function moveBall() {
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
-		//draw rectangle
-		drawRect();
-		
-		
-		//score();
-		
-		// Update the y location.
-		ball.position.x += ball.velocity.x;
-        ball.position.y += ball.velocity.y;
-		
-		// Keep the animation going while the ball has not touched the canvas bottom.
-        if ((ball.position.x >= canvas.width - ball.radius) ||  (ball.position.x <= ball.radius))
-          ball.velocity.x = -ball.velocity.x;    
-		if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
-          ball.velocity.y = -ball.velocity.y;
-		  
-		if(ball.position.y  > rectangle.position.y + 10)
-		{	
-			//call game over function
-			gameOver();
-		}
-		  
-		  collideWithRect();
-		  collideWithCircle();
-		  
-			ctx.fillStyle = "black";
-			ctx.font = "18px Arial";
-			ctx.fillText("Score: " + score, 10, 20);
-		
-        if (!over)
+			if(drawDoubleScore == 0)
+			{
+				drawDoubleScore=1;
+				setTimeout(canDrawBonusCircle, randomTimeDoubleScore);
+				console.log("time out set");
+			}
+			
+			if(drawBiggerPaddle == 0)
+			{
+				drawBiggerPaddle=1;
+				setTimeout(canDrawBiggerPaddle, randomTimeBiggerPaddle); //not sure about this
+				//console.log("time out set");
+			}
+			
+			if(canDrawCircle == 0)
+			{
+				drawDoubleScoreCircle();
+			}
+			
+			if(canDrawBigPaddle == 0)
+			{
+				drawBiggerPaddleCircle();
+			}
+			//drawDoubleScoreCircle();
+			//drawBiggerPaddleCircle();
+			//draw circle
+			drawCircle();
+			
+			//draw rectangle
+			drawRect();
+			
+			
+			//score();
+			
+			// Update the y location.
+			ball.position.x += ball.velocity.x;
+			ball.position.y += ball.velocity.y;
+			
+			// Keep the animation going while the ball has not touched the canvas bottom.
+			if ((ball.position.x >= canvas.width - ball.radius) ||  (ball.position.x <= ball.radius))
+			  ball.velocity.x = -ball.velocity.x;    
+			if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
+			  ball.velocity.y = -ball.velocity.y;
+			  
+			if(ball.position.y  > rectangle.position.y + 10)
+			{	
+				//call game over function
+				gameOver();
+			}
+			  
+			  collideWithRect();
+			  collideWithDoubleScoreCircle();
+			  collideWithBigPaddleCircle();
+			  
+				ctx.fillStyle = "black";
+				ctx.font = "18px Arial";
+				ctx.fillText("Score: " + score, 10, 20);
+			
+			if (!over)
+				window.requestAnimationFrame(moveBall);
+		  }
+			
 			window.requestAnimationFrame(moveBall);
-      }
 		
-		window.requestAnimationFrame(moveBall);
-	
-	
-	function moveevent(event) { 
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-        if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
-          rectangle.position.x += 10;
-        else if (event.keyCode == 37 && rectangle.position.x > 0)
-          rectangle.position.x -= 10; 
-    }
-	
-	// Add an event listener to the keypress event.
-      window.addEventListener("keydown", moveevent);
+		
+		function moveevent(event) { 
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			
+			if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
+			  rectangle.position.x += 10;
+			else if (event.keyCode == 37 && rectangle.position.x > 0)
+			  rectangle.position.x -= 10; 
+		}
+		
+		// Add an event listener to the keypress event.
+		  window.addEventListener("keydown", moveevent);
 
-    </script>
-
+	</script>
 	
   </body>
   
