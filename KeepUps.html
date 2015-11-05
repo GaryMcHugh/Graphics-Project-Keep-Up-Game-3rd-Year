@@ -25,18 +25,20 @@
 	<canvas id="game-canvas" height="400" width="700"></canvas>
 	
     <script type="text/javascript"> 
-	  // Gets a handle to the element with id canvasOne.
-      var canvas = document.getElementById("game-canvas"); 
-      // Get a 2D context for the canvas.
-      var ctx = canvas.getContext("2d");
+
+	  // Gets a handle to the element with id game-canvas.
+	  var canvas = document.getElementById("game-canvas"); 
+	  // Get a 2D context for the canvas.
+	  var ctx = canvas.getContext("2d");
 	  
-	  var score=0;
-	  var over=0;
+	  var score=0; //set score to zero initially
+	  var over=0; //set over to zero to indicate the game is  not over
 	  
-	  var doubleScore=0;
-	  var biggerPaddle=0;
-	  var minusScore=0;
+	  var doubleScore=0; //determines if double score has been activated (activated if ball has collided with generated circle)
+	  var biggerPaddle=0; //determines if bigger paddle has been activated (activated if ball has collided with generated circle)
+	  var minusScore=0; //determines if minus score has been activated (activated if ball has collided with generated circle)
 	  
+	  //variables to store random times for bonus circles to generate
 	  var randomTimeDoubleScore;
 	  var randomTimeBiggerPaddle;
 	  var randomTimeMinusScore;
@@ -45,93 +47,107 @@
 	  var drawBiggerPaddle=0;
 	  var drawMinusScore=0;
 	  
+	  //variables to determine if the circle can be drawn
+	  //0 - true, 1 - false
 	  var canDrawCircle=1;
 	  var canDrawBigPaddle=1;
 	  var canDrawMinusScore=1;
 	  
+	  //allow execution once
 	  var executeBigPaddleOnce=0;
 	  var executeMinusScoreOnce=0;
-	  
-	  // An object for the ball.
+		  
+		// An object for the ball.
 		var ball = {
-			position: {x: 1, y: 50}
+			position: {x: 1, y: 50} //x=1 so while executes
 			, radius: 5
 			, velocity: {x: 3, y: 3}
 			, acceleration: {x: 0, y: 0.1}
 		}
-		
+			
+		//an object for the rectangle(the paddle)
 		var rectangle = {
 			position: {x: 300, y: 370}
 			, width: 20
 			, length: 100
 		}
 		
+		//object for the Double score circle
 		var doubleScoreCircle = {
-			position: {x: 999, y: 999}
+			position: {x: 999, y: 999} //dummy value so while executes
 			, radius: 20
 		}
 		
+		//object for the increase paddle size circle
 		var biggerPaddleCircle = {
-			position: {x: 999, y: 999}
+			position: {x: 999, y: 999} //dummy value so while executes
 			, radius: 20
 		}
 		
+		//object for circle that takes 5 from score
 		var minusScoreCircle = {
-			position: {x: 999, y: 999}
-			, radius: 10
+			position: {x: 999, y: 999} //dummy value so while executes
+			, radius: 10 //smaller so its hard to hit and get score taken away from you
 		}
 		 
-		 
-		 while((doubleScoreCircle.position.x >= canvas.width - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.x <= doubleScoreCircle.radius))
-		 {
-			doubleScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
-			console.log("doubleScoreCircle x: " + doubleScoreCircle.position.x);
-		 }
-		 
-		 while ((doubleScoreCircle.position.y >= canvas.height - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.y <= doubleScoreCircle.radius))
-		 {
-			 doubleScoreCircle.position.y = Math.floor((Math.random() * 150 + 1));
-			console.log("doubleScoreCircle y: " + doubleScoreCircle.position.y);
-		 }
-		 
-		 while((biggerPaddleCircle.position.x >= canvas.width - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.x <= biggerPaddleCircle.radius))
-		 {
-			biggerPaddleCircle.position.x = Math.floor((Math.random() * 600 + 1));
-			console.log("biggerPaddleCircle x: " + biggerPaddleCircle.position.x);
-		 }
-		 
-		 while ((biggerPaddleCircle.position.y >= canvas.height - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.y <= biggerPaddleCircle.radius))
-		 {
-			biggerPaddleCircle.position.y = Math.floor((Math.random() * 150 + 1));
-			console.log("biggerPaddleCircle y: " + biggerPaddleCircle.position.y);
-		 }
-		 
-		 while((minusScoreCircle.position.x >= canvas.width - minusScoreCircle.radius) ||  (minusScoreCircle.position.x <= minusScoreCircle.radius))
-		 {
-			minusScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
-			console.log("minusScoreCircle x: " + minusScoreCircle.position.x);
-		 }
-		 
-		 while ((minusScoreCircle.position.y >= canvas.height - minusScoreCircle.radius) ||  (minusScoreCircle.position.y <= minusScoreCircle.radius))
-		 {
-			minusScoreCircle.position.y = Math.floor((Math.random() * 150 + 1));
-			console.log("minusScoreCircle y: " + minusScoreCircle.position.y);
-		 }
-		 
-		 while (ball.position.x < 3)
-		 {
-			ball.position.x = Math.floor((Math.random() * 690 + 1));
-		 }
-		 
-		 randomTimeDoubleScore = Math.floor((Math.random() * 5000 + 5000));
-		// console.log("generated random time" + randomTimeDoubleScore);
-		 
-		 randomTimeBiggerPaddle = Math.floor((Math.random() * 5000 + 15000));
-		// console.log("generated random time" + randomTimeBiggerPaddle);
-		 
-		 randomTimeMinusScore = Math.floor((Math.random() * 5000 + 25000));
-		 console.log("generated random time minus" + randomTimeMinusScore);
+		//creates random position for x co-ordinate on ball
+		while (ball.position.x < 3) //ball glitches on wall if x is 3 or less
+		{
+			ball.position.x = Math.floor((Math.random() * 690 + 1)); //random number between 1 and 690 
+		}	
 		
+		//creates random position for x co-ordinate on double score circle
+		while((doubleScoreCircle.position.x >= canvas.width - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.x <= doubleScoreCircle.radius)) 
+		//while circle is touching the canvas wall (on x co-ord), generate a new x co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			doubleScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
+		}
+		
+		//creates random position for y co-ordinate on double score circle
+		while ((doubleScoreCircle.position.y >= canvas.height - doubleScoreCircle.radius) ||  (doubleScoreCircle.position.y <= doubleScoreCircle.radius))
+		//while circle is touching the canvas wall (on y-co-ord), generate a new y co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			 doubleScoreCircle.position.y = Math.floor((Math.random() * 150 + 1)); //150 as I want the circle to generate near the top of the canvas
+		}
+		
+		//creates random position for x co-ordinate on bigger paddle circle
+		while((biggerPaddleCircle.position.x >= canvas.width - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.x <= biggerPaddleCircle.radius))
+		//while circle is touching the canvas wall (on x co-ord), generate a new x co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			biggerPaddleCircle.position.x = Math.floor((Math.random() * 600 + 1));
+		}
+		
+		//creates random position for y co-ordinate on bigger paddle circle
+		while ((biggerPaddleCircle.position.y >= canvas.height - biggerPaddleCircle.radius) ||  (biggerPaddleCircle.position.y <= biggerPaddleCircle.radius))
+		//while circle is touching the canvas wall (on y-co-ord), generate a new y co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			biggerPaddleCircle.position.y = Math.floor((Math.random() * 150 + 1)); //150 as I want the circle to generate near the top of the canvas
+		}
+		
+		//creates random position for x co-ordinate on minus score circle
+		while((minusScoreCircle.position.x >= canvas.width - minusScoreCircle.radius) ||  (minusScoreCircle.position.x <= minusScoreCircle.radius))
+		//while circle is touching the canvas wall (on x co-ord), generate a new x co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			minusScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
+		}
+		
+		//creates random position for y co-ordinate on bigger paddle circle
+		while ((minusScoreCircle.position.y >= canvas.height - minusScoreCircle.radius) ||  (minusScoreCircle.position.y <= minusScoreCircle.radius))
+		//while circle is touching the canvas wall (on y-co-ord), generate a new y co-ordinate(ensures ball is not generated in the wall of the canvas)
+		{
+			minusScoreCircle.position.y = Math.floor((Math.random() * 150 + 1)); //150 as I want the circle to generate near the top of the canvas
+		}
+		
+		//generate random time between 5 and 10 seconds(5000-10000 milliseconds) for double score circle
+		randomTimeDoubleScore = Math.floor((Math.random() * 5000 + 5000));
+		
+		//generate random time between 15 and 20 seconds(15000-20000 milliseconds) for bigger paddle circle
+		randomTimeBiggerPaddle = Math.floor((Math.random() * 5000 + 15000));
+		
+		//generate random time between 25 and 30 seconds(25000-30000 milliseconds) for minus score circle
+		randomTimeMinusScore = Math.floor((Math.random() * 5000 + 25000));
+		
+		//draws ball to canvas
 		function drawCircle() {
 			ctx.fillStyle = "rgb(0, 0, 255)";
 			ctx.beginPath();
@@ -139,91 +155,91 @@
 			ctx.fill();
 		}
 		
+		//draws double score circle to canvas
 		function drawDoubleScoreCircle() {
 			ctx.fillStyle = "rgb(0, 255, 0)";
-			if(doubleScore == 1)
+			if(doubleScore == 1) //will equal 1 if collision has occurred
 			{
-				ctx.fillStyle = "rgb(255, 255, 255)";
+				ctx.fillStyle = "rgb(255, 255, 255)"; //set circle to white if the ball hits it
 			}
 			ctx.beginPath();
 			ctx.arc(doubleScoreCircle.position.x, doubleScoreCircle.position.y, doubleScoreCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-		//	console.log("doubleScore drawn");
 		}
 		
+		//draws bigger paddle circle to canvas
 		function drawBiggerPaddleCircle() {
 			ctx.fillStyle = "rgb(255, 150, 0)";
-			if(biggerPaddle == 1)
+			if(biggerPaddle == 1) //will equal 1 if collision has occurred
 			{
-				ctx.fillStyle = "rgb(255, 255, 255)";
+				ctx.fillStyle = "rgb(255, 255, 255)"; //set circle to white if the ball hits it
 			}
 			ctx.beginPath();
 			ctx.arc(biggerPaddleCircle.position.x, biggerPaddleCircle.position.y, biggerPaddleCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-			//console.log("bigger paddle drawn");
 		}
 		
+		//draws minus score circle to canvas
 		function drawMinusScoreCircle() {
 			ctx.fillStyle = "rgb(255, 0, 0)";
-			if(minusScore == 1)
+			if(minusScore == 1) //will equal 1 if collision has occurred
 			{
-				ctx.fillStyle = "rgb(255, 255, 255)";
+				ctx.fillStyle = "rgb(255, 255, 255)"; //set circle to white if the ball hits it
 			}
 			ctx.beginPath();
 			ctx.arc(minusScoreCircle.position.x, minusScoreCircle.position.y, minusScoreCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-			console.log("minus score drawn");
 		}
 		
+		//draw the rectange(paddle) to the canvas
 		function drawRect() {
 			ctx.fillStyle = "rgb(170, 170, 170)";
 			ctx.beginPath();
 			ctx.rect(rectangle.position.x,rectangle.position.y,rectangle.length,rectangle.width);
 			ctx.fill();
-			//console.log("drew Rect");
 		}
 		
-		function gameOver()
-		{
+		//called when ball touches the bottom of the canvas
+		function gameOver() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			ctx.fillStyle = "black";
 			ctx.font = "22px Arial";
-			ctx.clearRect(0, 0, canvas.width, canvas.height);
-			ctx.fillText("Game Over ", 280, 200);
-			ctx.fillText("Your Score Was: " + score, 260, 230);
-			over = 1;
-			window.removeEventListener("keydown", moveevent);
+			ctx.fillText("Game Over ", 295, 200); //write game over to the screen
+			ctx.fillText("Your Score Was: " + score, 258, 230); //tell the user their score
+			over = 1; //set over to 1 to stop the animation frame
+			window.removeEventListener("keydown", moveevent); //remove the event listener as game has ended
 		}
 		
+		//detects the collision between the ball and rectangle
 		function collideWithRect() {
+			//if the ball is to the left or the right of the rectangle(paddle) return
 			if (ball.position.x + ball.radius < rectangle.position.x || ball.position.x - ball.radius > rectangle.position.x + rectangle.length)
 				return;
 			
+			//if the ball is above the rectangle(paddle) return
 			else if (ball.position.y + ball.radius < rectangle.position.y)
 				return;
 			
+			//if the bal is not to the left or right of the rectangle and its not above it, it has to be touching it
 			else{
-				ball.velocity.y = -ball.velocity.y;
-				if(doubleScore == 0)
+				ball.velocity.y = -ball.velocity.y; //bounce the ball back off the paddle
+				if(doubleScore == 0) //if double score has not been active add 1 to the score
 				{
 					score++;
 				}
-				if(doubleScore == 1)
+				if(doubleScore == 1) //if double score has been activated add 2 to the score
 				{
 					score = score+2;
-				}
-				if(biggerPaddle == 0)
+				}			
+				
+				//speed up the ball if the score can be evenly divided by 5 (adds a challenge to the game)
+				if(score != 0 && score % 5 == 0)
 				{
-					return;
-				}
-				
-				
-				if(score != 0 && score % 5 == 0){
 					if(ball.velocity.y < 0)
-						ball.velocity.y -= 0.5;
+						ball.velocity.y -= 0.5; //minus if velocity is negative
 						
 					if(ball.velocity.y > 0)
-						ball.velocity.y += 0.5;
+						ball.velocity.y += 0.5; //add if velocity is positive
 						
 					if(ball.velocity.x < 0)
 						ball.velocity.x -= 0.5;
@@ -234,155 +250,159 @@
 			}	
 		}
 		
-		function collideWithDoubleScoreCircle() {	
-			  var dx = (ball.position.x ) - (doubleScoreCircle.position.x );
-              var dy = (ball.position.y ) - (doubleScoreCircle.position.y );
-              var distance = Math.sqrt(dx * dx + dy * dy);
-			  
-              if (distance < ball.radius + doubleScoreCircle.radius & canDrawCircle == 0) {                      
-                  doubleScore=1;       
-              } 
+		//detects the collision between the ball and the double score circle
+		function collideWithDoubleScoreCircle() {
+			var dx = (ball.position.x ) - (doubleScoreCircle.position.x ); //distance between ball and circle (x co-ord)
+			var dy = (ball.position.y ) - (doubleScoreCircle.position.y ); //distance between ball and circle (y co-ord)
+			var distance = Math.sqrt(dx * dx + dy * dy); //use distance formula to detect collision between 2 circles
+			
+			//if the distance is less that the radii of the circles combined then the collision has occurred
+			if (distance < ball.radius + doubleScoreCircle.radius & canDrawCircle == 0) 
+			{                      
+				doubleScore=1; //circle will now turn white (from if condition in draw function) & score will be incremented by 2
+			} 
 		}
 		
+		//detects the collision between the ball and big paddle circle
 		function collideWithBigPaddleCircle() {	
-			  var dx = (ball.position.x ) - (biggerPaddleCircle.position.x );
-              var dy = (ball.position.y ) - (biggerPaddleCircle.position.y );
-              var distance = Math.sqrt(dx * dx + dy * dy);
-			  
-              if (distance < ball.radius + biggerPaddleCircle.radius & canDrawBigPaddle == 0) {                      
-                  biggerPaddle = 1;
-              }
-			  
+			var dx = (ball.position.x ) - (biggerPaddleCircle.position.x ); //distance between ball and circle (x co-ord)
+			var dy = (ball.position.y ) - (biggerPaddleCircle.position.y ); //distance between ball and circle (y co-ord)
+			var distance = Math.sqrt(dx * dx + dy * dy); //use distance formula to detect collision between 2 circles
+			
+			//if the distance is less that the radii of the circles combined then the collision has occurred
+			if (distance < ball.radius + biggerPaddleCircle.radius & canDrawBigPaddle == 0)
+			{                      
+				biggerPaddle = 1; //circle will now turn white (from if condition in draw function)
+			}
+			
+			//if collision has occurred and variable is equal to zero
 			if(biggerPaddle == 1 && executeBigPaddleOnce == 0)
 			{
-				executeBigPaddleOnce=1;
-				rectangle.length = rectangle.length + 25;
+				executeBigPaddleOnce=1; //set variable to 1 as we only want this to happen once
+				rectangle.length = rectangle.length + 25; //increase the length of the paddle
 			}
 		}
 		
+		//detects the collision between the ball and minus score circle
 		function collideWithMinusScoreCircle() {	
-			  var dx = (ball.position.x ) - (minusScoreCircle.position.x );
-              var dy = (ball.position.y ) - (minusScoreCircle.position.y );
-              var distance = Math.sqrt(dx * dx + dy * dy);
-			  
-              if (distance < ball.radius + minusScoreCircle.radius & canDrawMinusScore == 0) {                      
-                  minusScore = 1;
-              }
-			  
+			var dx = (ball.position.x ) - (minusScoreCircle.position.x ); //distance between ball and circle (x co-ord)
+			var dy = (ball.position.y ) - (minusScoreCircle.position.y ); //distance between ball and circle (y co-ord)
+			var distance = Math.sqrt(dx * dx + dy * dy); //use distance formula to detect collision between 2 circles
+			
+			//if the distance is less that the radii of the circles combined then the collision has occurred
+			if (distance < ball.radius + minusScoreCircle.radius & canDrawMinusScore == 0) {                      
+				  minusScore = 1; //circle will now turn white (from if condition in draw function)
+			}
+			
+			//if collision has occurred and variable is equal to zero
 			if(minusScore == 1 && executeMinusScoreOnce == 0)
 			{
-				executeMinusScoreOnce=1;
+				executeMinusScoreOnce=1; //set variable to 1 as we only want this to happen once
 				
-				if(score >= 5){
-					score= score-5;
+				if(score >= 5)
+				{ 
+					score= score-5; //if score is greater than 5 take 5 from score
 				}
 			}
 		}
-				
+		
 		function canDrawBonusCircle() {
-			canDrawCircle=0;
+			canDrawCircle=0; //sets variable to zero so circle can be drawn(like a lock until setTimeout is done)
 		}
 		
 		function canDrawBiggerPaddle() {
-			canDrawBigPaddle=0;
+			canDrawBigPaddle=0; //sets variable to zero so circle can be drawn(like a lock until setTimeout is done)
 		}
 		
 		function canDrawMinusScores() {
-			canDrawMinusScore=0;
+			canDrawMinusScore=0; //sets variable to zero so circle can be drawn(like a lock until setTimeout is done)
 		}
-	
+
 		function moveBall() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 		
 			if(drawDoubleScore == 0)
 			{
-				drawDoubleScore=1;
-				setTimeout(canDrawBonusCircle, randomTimeDoubleScore);
-				//console.log("time out set");
+				drawDoubleScore=1; //set variable to one as we only want this to happen once
+				setTimeout(canDrawBonusCircle, randomTimeDoubleScore); //call to function that unlocks draw functionality and passes the random time generated
 			}
 			
 			if(drawBiggerPaddle == 0)
 			{
-				drawBiggerPaddle=1;
-				setTimeout(canDrawBiggerPaddle, randomTimeBiggerPaddle); //not sure about this
-				//console.log("time out set");
+				drawBiggerPaddle=1; //set variable to one as we only want this to happen once
+				setTimeout(canDrawBiggerPaddle, randomTimeBiggerPaddle); //call to function that unlocks draw functionality and passes the random time generated
 			}
 			
 			if(drawMinusScore == 0)
 			{
-				drawMinusScore=1;
-				setTimeout(canDrawMinusScores, randomTimeMinusScore); //not sure about this
-				console.log("time out set minus");
+				drawMinusScore=1; //set variable to one as we only want this to happen once
+				setTimeout(canDrawMinusScores, randomTimeMinusScore); //call to function that unlocks draw functionality and passes the random time generated
 			}
 			
-			if(canDrawCircle == 0)
+			if(canDrawCircle == 0) //not zero until time out has finished
 			{
-				drawDoubleScoreCircle();
+				drawDoubleScoreCircle(); //call draw double score circle function
 			}
 			
-			if(canDrawBigPaddle == 0)
+			if(canDrawBigPaddle == 0) //not zero until time out has finished
 			{
-				drawBiggerPaddleCircle();
+				drawBiggerPaddleCircle(); //call draw double big paddle circle function
 			}
 			
-			if(canDrawMinusScore == 0)
+			if(canDrawMinusScore == 0) //not zero until time out has finished
 			{
-				drawMinusScoreCircle();
+				drawMinusScoreCircle(); //call draw minus score circle function
 			}
-			//drawDoubleScoreCircle();
-			//drawBiggerPaddleCircle();
-			//draw circle
+			
+			//draw ball
 			drawCircle();
 			
-			//draw rectangle
+			//draw rectangle(paddle)
 			drawRect();
-			
-			
-			//score();
 			
 			// Update the y location.
 			ball.position.x += ball.velocity.x;
 			ball.position.y += ball.velocity.y;
 			
-			// Keep the animation going while the ball has not touched the canvas bottom.
+			//bounces the ball off the walls
 			if ((ball.position.x >= canvas.width - ball.radius) ||  (ball.position.x <= ball.radius))
-			  ball.velocity.x = -ball.velocity.x;    
+				ball.velocity.x = -ball.velocity.x;    
 			if ((ball.position.y >= canvas.height - ball.radius) ||  (ball.position.y <= ball.radius))
-			  ball.velocity.y = -ball.velocity.y;
-			  
+				ball.velocity.y = -ball.velocity.y;
+			
+			//if the ball goes beneath the y co-ord of the paddle
 			if(ball.position.y  > rectangle.position.y + 10)
 			{	
 				//call game over function
 				gameOver();
 			}
 			  
-			  collideWithRect();
-			  collideWithDoubleScoreCircle();
-			  collideWithBigPaddleCircle();
-			  collideWithMinusScoreCircle();
-			  
-				ctx.fillStyle = "black";
-				ctx.font = "18px Arial";
-				ctx.fillText("Score: " + score, 10, 20);
+			collideWithRect(); //call to collide function
+			collideWithDoubleScoreCircle(); //call to collide function
+			collideWithBigPaddleCircle(); //call to collide function
+			collideWithMinusScoreCircle(); //call to collide function
+			
+			ctx.fillStyle = "black";
+			ctx.font = "18px Arial";
+			ctx.fillText("Score: " + score, 10, 20); //display score in top left corner as game is being played
 			
 			if (!over)
-				window.requestAnimationFrame(moveBall);
-		  }
+				window.requestAnimationFrame(moveBall); //stop animation when game is over
+		}
 			
-			window.requestAnimationFrame(moveBall);
-		
+		window.requestAnimationFrame(moveBall);	
 		
 		function moveevent(event) { 
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
 			
-			if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width)
-			  rectangle.position.x += 10;
-			else if (event.keyCode == 37 && rectangle.position.x > 0)
-			  rectangle.position.x -= 10; 
+			if (event.keyCode == 39 && rectangle.position.x + rectangle.length < canvas.width) //stop moving right if its going to collide with the wall
+				rectangle.position.x += 10; //move paddle right
+			else if (event.keyCode == 37 && rectangle.position.x > 0) //stop moving left if its going to collide with the wall
+				rectangle.position.x -= 10; //move paddle left
 		}
 		
-		// Add an event listener to the keypress event.
-		  window.addEventListener("keydown", moveevent);
+		// Add an event listener to the key press event.
+		window.addEventListener("keydown", moveevent);
 
 	</script>
 	
