@@ -7,7 +7,7 @@ Keep Ups is a game where the user must achieve the highest score possible by kee
 
 - Green circle: adds 2 to the score for every keep up (instead of 1).
 - Orange circle: makes the paddle bigger to make the game easier.
-- Red circle takes 5 away from the users score.
+- Red circle: takes 5 away from the users score.
 
 ##Instructions
 
