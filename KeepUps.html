@@ -32,15 +32,25 @@
 	  
 	  var score=0;
 	  var over=0;
+	  
 	  var doubleScore=0;
 	  var biggerPaddle=0;
+	  var minusScore=0;
+	  
 	  var randomTimeDoubleScore;
 	  var randomTimeBiggerPaddle;
+	  var randomTimeMinusScore;
+	  
 	  var drawDoubleScore=0;
 	  var drawBiggerPaddle=0;
+	  var drawMinusScore=0;
+	  
 	  var canDrawCircle=1;
 	  var canDrawBigPaddle=1;
-	  var executeOnce=0;
+	  var canDrawMinusScore=1;
+	  
+	  var executeBigPaddleOnce=0;
+	  var executeMinusScoreOnce=0;
 	  
 	  // An object for the ball.
 		var ball = {
@@ -64,6 +74,11 @@
 		var biggerPaddleCircle = {
 			position: {x: 999, y: 999}
 			, radius: 20
+		}
+		
+		var minusScoreCircle = {
+			position: {x: 999, y: 999}
+			, radius: 10
 		}
 		 
 		 
@@ -91,16 +106,31 @@
 			console.log("biggerPaddleCircle y: " + biggerPaddleCircle.position.y);
 		 }
 		 
+		 while((minusScoreCircle.position.x >= canvas.width - minusScoreCircle.radius) ||  (minusScoreCircle.position.x <= minusScoreCircle.radius))
+		 {
+			minusScoreCircle.position.x = Math.floor((Math.random() * 600 + 1));
+			console.log("minusScoreCircle x: " + minusScoreCircle.position.x);
+		 }
+		 
+		 while ((minusScoreCircle.position.y >= canvas.height - minusScoreCircle.radius) ||  (minusScoreCircle.position.y <= minusScoreCircle.radius))
+		 {
+			minusScoreCircle.position.y = Math.floor((Math.random() * 150 + 1));
+			console.log("minusScoreCircle y: " + minusScoreCircle.position.y);
+		 }
+		 
 		 while (ball.position.x < 3)
 		 {
 			ball.position.x = Math.floor((Math.random() * 690 + 1));
 		 }
 		 
 		 randomTimeDoubleScore = Math.floor((Math.random() * 5000 + 5000));
-		 console.log("generated random time" + randomTimeDoubleScore);
+		// console.log("generated random time" + randomTimeDoubleScore);
 		 
-		 randomTimeBiggerPaddle = Math.floor((Math.random() * 5000 + 10000));
-		 console.log("generated random time" + randomTimeBiggerPaddle);
+		 randomTimeBiggerPaddle = Math.floor((Math.random() * 5000 + 15000));
+		// console.log("generated random time" + randomTimeBiggerPaddle);
+		 
+		 randomTimeMinusScore = Math.floor((Math.random() * 5000 + 25000));
+		 console.log("generated random time minus" + randomTimeMinusScore);
 		
 		function drawCircle() {
 			ctx.fillStyle = "rgb(0, 0, 255)";
@@ -118,11 +148,11 @@
 			ctx.beginPath();
 			ctx.arc(doubleScoreCircle.position.x, doubleScoreCircle.position.y, doubleScoreCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-			console.log("doubleScore drawn");
+		//	console.log("doubleScore drawn");
 		}
 		
 		function drawBiggerPaddleCircle() {
-			ctx.fillStyle = "rgb(255, 0, 0)";
+			ctx.fillStyle = "rgb(255, 150, 0)";
 			if(biggerPaddle == 1)
 			{
 				ctx.fillStyle = "rgb(255, 255, 255)";
@@ -130,7 +160,19 @@
 			ctx.beginPath();
 			ctx.arc(biggerPaddleCircle.position.x, biggerPaddleCircle.position.y, biggerPaddleCircle.radius, 0, 2 * Math.PI);
 			ctx.fill();
-			console.log("doubleScore drawn");
+			//console.log("bigger paddle drawn");
+		}
+		
+		function drawMinusScoreCircle() {
+			ctx.fillStyle = "rgb(255, 0, 0)";
+			if(minusScore == 1)
+			{
+				ctx.fillStyle = "rgb(255, 255, 255)";
+			}
+			ctx.beginPath();
+			ctx.arc(minusScoreCircle.position.x, minusScoreCircle.position.y, minusScoreCircle.radius, 0, 2 * Math.PI);
+			ctx.fill();
+			console.log("minus score drawn");
 		}
 		
 		function drawRect() {
@@ -138,7 +180,7 @@
 			ctx.beginPath();
 			ctx.rect(rectangle.position.x,rectangle.position.y,rectangle.length,rectangle.width);
 			ctx.fill();
-			console.log("drew Rect");
+			//console.log("drew Rect");
 		}
 		
 		function gameOver()
@@ -211,10 +253,29 @@
                   biggerPaddle = 1;
               }
 			  
-			if(biggerPaddle == 1 && executeOnce == 0)
+			if(biggerPaddle == 1 && executeBigPaddleOnce == 0)
 			{
-				executeOnce=1;
+				executeBigPaddleOnce=1;
 				rectangle.length = rectangle.length + 25;
+			}
+		}
+		
+		function collideWithMinusScoreCircle() {	
+			  var dx = (ball.position.x ) - (minusScoreCircle.position.x );
+              var dy = (ball.position.y ) - (minusScoreCircle.position.y );
+              var distance = Math.sqrt(dx * dx + dy * dy);
+			  
+              if (distance < ball.radius + minusScoreCircle.radius & canDrawMinusScore == 0) {                      
+                  minusScore = 1;
+              }
+			  
+			if(minusScore == 1 && executeMinusScoreOnce == 0)
+			{
+				executeMinusScoreOnce=1;
+				
+				if(score >= 5){
+					score= score-5;
+				}
 			}
 		}
 				
@@ -225,6 +286,10 @@
 		function canDrawBiggerPaddle() {
 			canDrawBigPaddle=0;
 		}
+		
+		function canDrawMinusScores() {
+			canDrawMinusScore=0;
+		}
 	
 		function moveBall() {
 			ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -233,7 +298,7 @@
 			{
 				drawDoubleScore=1;
 				setTimeout(canDrawBonusCircle, randomTimeDoubleScore);
-				console.log("time out set");
+				//console.log("time out set");
 			}
 			
 			if(drawBiggerPaddle == 0)
@@ -241,6 +306,13 @@
 				drawBiggerPaddle=1;
 				setTimeout(canDrawBiggerPaddle, randomTimeBiggerPaddle); //not sure about this
 				//console.log("time out set");
+			}
+			
+			if(drawMinusScore == 0)
+			{
+				drawMinusScore=1;
+				setTimeout(canDrawMinusScores, randomTimeMinusScore); //not sure about this
+				console.log("time out set minus");
 			}
 			
 			if(canDrawCircle == 0)
@@ -251,6 +323,11 @@
 			if(canDrawBigPaddle == 0)
 			{
 				drawBiggerPaddleCircle();
+			}
+			
+			if(canDrawMinusScore == 0)
+			{
+				drawMinusScoreCircle();
 			}
 			//drawDoubleScoreCircle();
 			//drawBiggerPaddleCircle();
@@ -282,6 +359,7 @@
 			  collideWithRect();
 			  collideWithDoubleScoreCircle();
 			  collideWithBigPaddleCircle();
+			  collideWithMinusScoreCircle();
 			  
 				ctx.fillStyle = "black";
 				ctx.font = "18px Arial";
