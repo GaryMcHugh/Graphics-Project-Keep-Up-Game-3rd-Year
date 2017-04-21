@@ -3,7 +3,7 @@
 
 Keep Ups is a game where the user must achieve the highest score possible by keeping the ball from touching the ground. The user controls a paddle at the bottom of the screen and can move it left and right to keep the ball up. Circles are generated on the screen some of which provide benefits like a bigger paddle and others that penalise the users score. The circles are destroyed when the ball collides with them and the effect is applied. The effects of each colour are listed below.
 
-##Effects
+## Effects
 
 | shape and colour | Effect                       |
 | -----------------|:----------------------------:|
@@ -11,7 +11,7 @@ Keep Ups is a game where the user must achieve the highest score possible by kee
 | Orange circle    | increases length of paddle   |
 | Red circle       | takes 5 from score           |
 
-##Instructions
+## Instructions
 
 1. Use the left and right arrows to control the paddle.
 2. Keep the ball from touching the ground.
